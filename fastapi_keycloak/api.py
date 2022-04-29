@@ -254,9 +254,10 @@ class FastAPIKeycloak:
             """
             decoded_token = self._decode_token(token=token, audience="account")
             user = OIDCUser.parse_obj(decoded_token)
+            roles = user.resource_access
+            roles = roles[self.client_id]['roles']
             if required_roles:
                 for role in required_roles:
-                    if role not in user.roles:
                         raise HTTPException(
                             status_code=403,
                             detail=f'Role "{role}" is required to perform this action',
